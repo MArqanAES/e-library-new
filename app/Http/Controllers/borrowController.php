@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Borrow;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -13,6 +14,8 @@ class BorrowController extends Controller
     {
         $borrowDate = Carbon::today();
         $dueDate = $borrowDate->copy()->addDays(7);
+
+        $user = User::find($request->user_id);
 
         Borrow::create([
             'user_id' => $request->user_id,
@@ -26,8 +29,16 @@ class BorrowController extends Controller
         $book->status = 1;
         $book->save();
 
-        return redirect('/');
+        return redirect("/borrows/{$user->slug}")->with('success', 'Borrow has been added!');
         // return dd($request->all());
+    }
+
+    public function userIndex(User $user)
+    {
+        $title = 'Borrows';
+        $borrows = Borrow::where('user_id', $user->id)->latest()->paginate(9);
+
+        return view('borrows', compact('title', 'user', 'borrows'));
     }
 
     public function index()
