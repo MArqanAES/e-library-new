@@ -37,36 +37,42 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($books as $book)
+                @if ($books->count())
+                    @foreach ($books as $book)
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                {{ $loop->iteration }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ $book->name }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $book->category->name }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $book->author->name }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <img class="w-11" src="{{ Storage::url($book->cover) }}" alt="">
+                            </td>
+                            <td class="px-6 py-4 flex gap-2">
+                                <form action="/dashboard/book/{{ $book->slug }}" method="POST" class="text-red-500 hover:text-red-600">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" onclick="return confirm('Apakah anda yakin?')"><i class="fa-sharp fa-solid fa-trash"></i> Delete</button>
+                                </form>
+                                <p>|</p>
+                                <div class="text-yellow-500 hover:text-yellow-600">
+                                    <a href="/dashboard/book/{{ $book->slug }}/edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                </div>
+                            </td>
+                        </tr>           
+                    @endforeach
+                @else
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                            {{ $loop->iteration }}
-                        </th>
-                        <td class="px-6 py-4">
-                            {{ $book->name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $book->category->name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $book->author->name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <img class="w-11" src="{{ Storage::url($book->cover) }}" alt="">
-                        </td>
-                        <td class="px-6 py-4 flex gap-2">
-                            <form action="/dashboard/book/{{ $book->slug }}" method="POST" class="text-red-500 hover:text-red-600">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" onclick="return confirm('Apakah anda yakin?')"><i class="fa-sharp fa-solid fa-trash"></i> Delete</button>
-                            </form>
-                            <p>|</p>
-                            <div class="text-yellow-500 hover:text-yellow-600">
-                                <a href="/dashboard/book/{{ $book->slug }}/edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                            </div>
-                        </td>
-                    </tr>           
-                @endforeach
+                        <td colspan="6" class="p-4 text-center font-semibold">Tidak ada data buku</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
 
