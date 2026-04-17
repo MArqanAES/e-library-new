@@ -29,7 +29,9 @@ class BorrowController extends Controller
         $book->status = 1;
         $book->save();
 
-        return redirect("/borrows/{$user->slug}")->with('success', 'Borrow has been added!');
+        $user = User::find($request->user_id);
+
+        return redirect()->route('borrows', $user->slug)->with('success', 'berhasil pinjam buku!');
         // return dd($request->all());
     }
 
@@ -59,6 +61,10 @@ class BorrowController extends Controller
     public function update(Request $request, Borrow $borrow)
     {
         $borrow->status = $request->status;
+        if ($request->filled('message')) {
+            $borrow->message = $request->message;
+        }
+        
         $borrow->save();
 
         $book = Book::find($borrow->book->id);
@@ -79,5 +85,11 @@ class BorrowController extends Controller
         Borrow::destroy($borrow->id);
 
         return redirect('/dashboard/borrow')->with('success', 'Data peminjaman berhasil dihapus!!');
+    }
+    public function detail(Borrow $borrow)
+    {
+        $title = 'Borrow - Detail';
+
+        return view('borrows-detail', compact('title', 'borrow'));
     }
 }
