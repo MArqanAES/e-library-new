@@ -162,4 +162,27 @@ class ApiController extends Controller
             'message' => 'Login Failed'
         ], 401);
     }
+
+    public function BookByStatus(string $status)
+    {
+        $books = Book::where('status', $status)->get();
+
+        if ($books->isEmpty()) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+
+        return response()->json($books);
+    }
+
+    public function search(string $search)
+    {
+        $books = Book::where('name', 'like', '%' . $search . '%')->
+        orWhere('body', 'like', '%' . $search . '%')->get();
+
+        if ($books->isEmpty()) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+
+        return response()->json($books);
+    }
 }
